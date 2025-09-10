@@ -1,0 +1,122 @@
+<!-- views/dashboard.handlebars - Dashboard template -->
+
+<h1 class="text-center mb-4">Dashboard</h1>
+
+<!-- Filters with Bootstrap styling -->
+<form action="/dashboard" id="filtersForm" class="row g-3 mb-4">
+  {{!-- <div class="col-md-4">
+    <label for="branch" class="form-label">Branch:</label>
+    <select id="branch" class="form-select">
+      {{#each branchOptions}}
+        <option {{#if (eq this 'All')}}selected{{/if}}>{{this}}</option>
+      {{/each}}
+    </select>
+  </div>
+  <div class="col-md-4">
+    <label for="collegeCode" class="form-label">College Code:</label>
+    <select id="collegeCode" class="form-select">
+      {{#each collegeCodes}}
+        <option {{#if (eq this 'All')}}selected{{/if}}>{{this}}</option>
+      {{/each}}
+    </select>
+  </div> --}}
+  <div class="col-md-4">
+    <label for="collegeName" class="form-label">College Name:</label>
+    <select id="collegeName" class="form-select" name="college">
+       {{#each collegeNames}}
+      <option value="{{this}}" {{#if (eq ../selectedCollege this)}}selected{{/if}}>{{this}}</option>
+    {{/each}}
+    </select>
+  </div>
+  <div class="col-md-4">
+    <label for="universityName" class="form-label">University Name:</label>
+    <select id="universityName" class="form-select" name="university">
+    {{#each universityNames}}
+      <option value="{{this}}" {{#if (eq ../selectedUniversity this)}}selected{{/if}}>{{this}}</option>
+    {{/each}}
+    </select>
+  </div>
+  <div class="col-md-4">
+    <label for="district" class="form-label">District:</label>
+    <select id="district" class="form-select" name="district"> 
+    {{#each districts}}
+      <option value="{{this}}" {{#if (eq ../selectedDistrict this)}}selected{{/if}}>{{this}}</option>
+    {{/each}}
+    </select>
+
+  </div>
+
+  <div class="col-md-4 offset-8 mt-5">
+    <div class="d-flex justify-content-end">
+
+        <button type="submit" class="btn btn-primary">Filter</button>
+    </div>
+
+  </div>
+  {{!-- <div class="col-md-4">
+    <label for="courseName" class="form-label">Course Name:</label>
+    <select id="courseName" class="form-select">
+      {{#each courseNames}}
+        <option {{#if (eq this 'All')}}selected{{/if}}>{{this}}</option>
+      {{/each}}
+    </select>
+  </div> --}}
+</form>
+
+<!-- Chart container with card styling -->
+<div class="card mb-4">
+  <div class="card-body">
+    <h5 class="card-title text-center">Completed Sessions</h5>
+    <canvas id="branchChart" height="200"></canvas>
+  </div>
+</div>
+
+
+<script>
+  // Pass data from server to client
+  const initialBranches = {{{json collegeNames}}};
+
+  // Initialize Chart.js
+  const ctx = document.getElementById('branchChart').getContext('2d');
+
+new Chart(ctx, {
+  type: 'bar',
+  data: 
+    {{{json chartData}}}
+  ,
+  options: {
+    responsive: true,
+    plugins: {
+      title: {
+        display: true,
+        text: 'Quarterly Sales by Product (Stacked)',
+        font: { size: 18 }
+      },
+      legend: {
+        display: false
+      },
+      datalabels: {
+        color: '#fff',
+        font: { weight: 'bold' },
+        formatter: (value, context) => {
+          // Show both product name and count inside bar
+          return `${context.dataset.label}: ${value}`;
+        }
+      }
+    },
+    scales: {
+      x: { stacked: true },
+      y: { stacked: true, beginAtZero: true }
+    }
+  },
+  plugins: [ChartDataLabels]
+});
+
+  // For simplicity, filters can trigger page reload with query params.
+  // In a real app, implement client-side filtering or AJAX.
+  document.querySelectorAll('select').forEach(select => {
+    select.addEventListener('change', () => {
+      console.log('Filter changed - implement dynamic update');
+    });
+  });
+</script>
