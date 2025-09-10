@@ -9,9 +9,16 @@ const __dirname = dirname(__filename);
 
 async function sheets() {
 
-    const credentials = JSON.parse(
-    await readFile(new URL('credentials.json', import.meta.url), 'utf8')
-  );
+//     const credentials2 = JSON.parse(
+//     await readFile(new URL('credentials.json', import.meta.url), 'utf8')
+//   );
+
+
+    const cred = JSON.parse(process.env.cred);
+    cred.private_key = cred.private_key.replace(/\\n/g, '\n')
+    const credentials = cred
+
+    console.log(credentials)
   // Initialize the spreadsheet with credentials
   const auth = new GoogleAuth({
   credentials: {
@@ -112,7 +119,7 @@ export async function prepareChartData(filters = {}) {
     });
 
     return {
-      labels: departments,
+      labels: departments.map((item => item.length > 25 ? `${item.slice(0,15)}...${item.slice(-15)}` : item)),
       datasets: [{
         label: filters.college,
         data,
@@ -148,7 +155,7 @@ export async function prepareChartData(filters = {}) {
   });
 
   return {
-    labels: colleges,
+    labels: colleges.map((item => item.length > 25 ? `${item.slice(0,12)}...${item.slice(-12)}` : item)),
     datasets,
     stacked: true
   };

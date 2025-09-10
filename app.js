@@ -4,6 +4,8 @@ const express = require('express');
 const exphbs = require('express-handlebars');
 const path = require('path');
 const { readSheet, getAllUniqueData, prepareChartData } = require('./sheets');
+const { configDotenv } = require('dotenv');
+configDotenv();
 
 const app = express();
 const port = 5171;
